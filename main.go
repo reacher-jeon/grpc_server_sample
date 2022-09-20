@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/common-nighthawk/go-figure"
 	"google.golang.org/grpc"
-	"grpc_server_sample/buf_sample"
-	typeV1 "grpc_server_sample/buf_sample/type"
+	sampleV1 "grpc_server_sample/pb/sample/v1"
+	typeV1 "grpc_server_sample/pb/type/v1"
 	lr "grpc_server_sample/utils/logger"
 	"log"
 	"net"
@@ -25,7 +25,7 @@ const (
 )
 
 type Server struct {
-	buf_sample.UnimplementedTestServiceServer
+	sampleV1.UnimplementedSampleServiceServer
 }
 
 var (
@@ -61,15 +61,30 @@ func main() {
 	}*/
 
 	grpcServer := grpc.NewServer()
+
+	sampleService := Server{}
+	sampleService.RegisterService(grpcServer)
+
 	fmt.Printf("server listening at %v", lis.Addr())
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Printf("failed to serve: %v", err)
 	}
 
-	buf_sample.RegisterTestServiceServer(defaultServer, &Server{})
+	//sample.RegisterSampleServiceServer(defaultServer, &Server{})
+	//RegisterService(defaultServer)
+
 }
 
-func (s *Server) GetInfo(ctx context.Context, req *buf_sample.GetInfoInfoRequest) (*buf_sample.GetInfoResponse, error) {
+func (s *Server) RegisterService(mainServer *grpc.Server) error {
+	//taskV1.RegisterTaskServiceServer(mainServer, &Server{})
+	sampleV1.RegisterSampleServiceServer(mainServer, &Server{})
+	fmt.Println("Register Success")
+	fmt.Println(mainServer)
+
+	return nil
+}
+
+func (s *Server) GetInfo(ctx context.Context, req *sampleV1.GetInfoInfoRequest) (*sampleV1.GetInfoResponse, error) {
 	fmt.Println("===== GetInfo Start =====", ctx)
 
 	requestHeader := req.GetHeader()
@@ -80,15 +95,15 @@ func (s *Server) GetInfo(ctx context.Context, req *buf_sample.GetInfoInfoRequest
 		fmt.Println("[Request] GetInfo Request Body:", requestBody)
 	}
 
-	responseData := &buf_sample.GetInfoResponse{
+	responseData := &sampleV1.GetInfoResponse{
 		Header: &typeV1.Header{
 			Version:     "",
 			ToIds:       requestHeader.ToIds,
 			FromId:      typeV1.RequestNode_REQUEST_NODE_CUSTOM,
 			RequesterId: requestHeader.RequesterId,
 		},
-		Error: &typeV1.Error{},
-		Id:    "Hello gRPC",
+		Error:   &typeV1.Error{},
+		Message: "Hello gRPC",
 	}
 
 	return responseData, nil
