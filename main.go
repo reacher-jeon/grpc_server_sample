@@ -123,7 +123,7 @@ func packageName() string {
 }
 
 func logoPrint() {
-	//serviceLogo := `DX-Dev3 ` + packageName()
+	//serviceLogo := `Reacher ` + packageName()
 	serviceLogo := `gRPC Server Example`
 	fmt.Println(figure.NewFigure(serviceLogo, "doom", true))
 	//start time
