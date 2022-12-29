@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/common-nighthawk/go-figure"
+	sampleV1 "github.com/reacher-jeon/grpc_server_sample/pb/sample/v1"
+	typeV1 "github.com/reacher-jeon/grpc_server_sample/pb/type/v1"
+	lr "github.com/reacher-jeon/grpc_server_sample/utils/logger"
 	"google.golang.org/grpc"
-	sampleV1 "grpc_server_sample/pb/sample/v1"
-	typeV1 "grpc_server_sample/pb/type/v1"
-	lr "grpc_server_sample/utils/logger"
 	"log"
 	"net"
 	"os"
@@ -79,7 +79,6 @@ func (s *Server) RegisterService(mainServer *grpc.Server) error {
 	//taskV1.RegisterTaskServiceServer(mainServer, &Server{})
 	sampleV1.RegisterSampleServiceServer(mainServer, &Server{})
 	fmt.Println("Register Success")
-	fmt.Println(mainServer)
 
 	return nil
 }
